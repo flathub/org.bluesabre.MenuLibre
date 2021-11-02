@@ -43,6 +43,10 @@ modules:
       - type: archive
         url: 'https://download.gnome.org/sources/glib/2.70/glib-2.70.0.tar.xz'
         sha256: 200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742
+        x-checker-data:
+          type: gnome
+          name: glib
+          stable-only: true
       - type: patch
         path: 0001-do-not-test-exec.patch
 
@@ -75,6 +79,10 @@ modules:
       - type: archive
         url: https://download.gnome.org/sources/gtk+/3.24/gtk%2B-3.24.26.tar.xz
         sha256: 2cc1b2dc5cad15d25b6abd115c55ffd8331e8d4677745dd3ce6db725b4fff1e9
+        x-checker-data:
+          type: gnome
+          name: gtk+
+          stable-only: true
 
   - name: python-psutil
     buildsystem: simple
