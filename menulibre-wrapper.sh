@@ -2,7 +2,7 @@
 
 mkdir -p /tmp/xdg-menus
 
-setopt -o nullglob
+shopt -s nullglob
 for menu in /app/gnome-menus/*.menu /run/host/etc/xdg/menus/*.menu; do
   ln -sf "$menu" /etc/xdg/menus
 done
