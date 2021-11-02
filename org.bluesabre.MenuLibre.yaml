@@ -76,6 +76,13 @@ modules:
         url: https://download.gnome.org/sources/gtk+/3.24/gtk%2B-3.24.26.tar.xz
         sha256: 2cc1b2dc5cad15d25b6abd115c55ffd8331e8d4677745dd3ce6db725b4fff1e9
 
+  - name: garcon
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://gitlab.xfce.org/xfce/garcon.git
+        tag: garcon-4.16.1
+
   - name: python-psutil
     buildsystem: simple
     build-commands:
