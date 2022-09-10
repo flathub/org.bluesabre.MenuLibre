@@ -103,5 +103,7 @@ modules:
       - type: git
         url: https://github.com/bluesabre/menulibre.git
         commit: cdde88daa6bf70632781870544357dc2f9a24006
+      - type: patch
+        path: 9097faf0965e83312f9fd6950efa35a754e2fd9d.patch
 #        tag: menulibre-2.2.3
 #        commit: 86ee9ad7568128fe9555e54799933b2d3762331a
