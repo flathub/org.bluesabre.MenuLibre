@@ -1,6 +1,6 @@
 app-id: org.bluesabre.MenuLibre
 runtime: org.gnome.Platform
-runtime-version: '42'
+runtime-version: '43'
 sdk: org.gnome.Sdk
 command: menulibre-wrapper
 rename-icon: menulibre
