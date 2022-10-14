@@ -14,6 +14,8 @@ finish-args:
   - '--filesystem=xdg-data/applications:create'
   - '--filesystem=xdg-data/flatpak:ro'
   - '--filesystem=/var/lib/flatpak:ro'
+  - '--talk-name=org.freedesktop.Flatpak'
+  - '--talk-name=org.freedesktop.Flatpak.*'
 
 cleanup:
   - '/include'
@@ -100,11 +102,11 @@ modules:
             export
             XDG_DATA_DIRS=$XDG_DATA_DIRS:/run/host/usr/share:/var/lib/flatpak/exports/share:~/.local/share/flatpak/exports/share
           - menulibre "$@"
-      - type: git
-        url: https://github.com/bluesabre/menulibre.git
-        commit: cdde88daa6bf70632781870544357dc2f9a24006
+#      - type: git
+#        url: https://github.com/bluesabre/menulibre.git
+#        commit: cdde88daa6bf70632781870544357dc2f9a24006
 #        tag: menulibre-2.2.3
 #        commit: 86ee9ad7568128fe9555e54799933b2d3762331a
-      - type: patch
-        path: 0001-Fix-appstream.patch
+      - type: dir
+        path: /home/bluesabre/Projects/Code/menulibre
 
