@@ -64,6 +64,10 @@ modules:
 
   - name: gnome-menu
     buildsystem: autotools
+    post-install:
+      - 'mv /app/etc/xdg/menus /app/gnome-menus'
+      - 'ln -s /tmp/xdg-menus /app/etc/xdg/menus'
+
     sources:
       - type: git
         url: https://gitlab.gnome.org/GNOME/gnome-menus.git
@@ -90,19 +94,16 @@ modules:
     build-commands:
       - 'python3 setup.py install --prefix=/app'
     post-install:
-      - 'install -D menulibre-wrapper /app/bin/menulibre-wrapper'
+      - 'install -D menulibre-wrapper.sh /app/bin/menulibre-wrapper'
       - "desktop-file-edit --set-key=Exec --set-value='/app/bin/menulibre-wrapper' /app/share/applications/menulibre.desktop"
     sources:
       - type: script
         dest-filename: menulibre-wrapper
-        commands:
-          - >-
-            export
-            XDG_DATA_DIRS=$XDG_DATA_DIRS:/run/host/usr/share:/var/lib/flatpak/exports/share:~/.local/share/flatpak/exports/share
-          - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
         commit: cdde88daa6bf70632781870544357dc2f9a24006
+      - type: file
+        path: menulibre-wrapper.sh
 #        tag: menulibre-2.2.3
 #        commit: 86ee9ad7568128fe9555e54799933b2d3762331a
       - type: patch
