@@ -1,6 +1,6 @@
 app-id: org.bluesabre.MenuLibre
 runtime: org.gnome.Platform
-runtime-version: '42'
+runtime-version: '44'
 sdk: org.gnome.Sdk
 command: menulibre-wrapper
 rename-icon: menulibre
@@ -102,9 +102,7 @@ modules:
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
-        commit: cdde88daa6bf70632781870544357dc2f9a24006
+        commit: 90ae88e3b90d99ddf2fc5dd1e264081cdc4ddb1d
 #        tag: menulibre-2.2.3
 #        commit: 86ee9ad7568128fe9555e54799933b2d3762331a
-      - type: patch
-        path: 0001-Fix-appstream.patch
 
