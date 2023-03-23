@@ -38,7 +38,6 @@ modules:
     config-opts:
       - '-Dtests=false'
       - '-Dselinux=disabled'
-      - '-Dinternal_pcre=false'
     sources:
       - type: archive
         url: 'https://download.gnome.org/sources/glib/2.70/glib-2.70.0.tar.xz'
