@@ -1,6 +1,6 @@
 app-id: org.bluesabre.MenuLibre
 runtime: org.gnome.Platform
-runtime-version: '47'
+runtime-version: '49'
 sdk: org.gnome.Sdk
 command: menulibre-wrapper
 rename-icon: menulibre
@@ -10,11 +10,13 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --share=ipc
+  - --filesystem=xdg-data/flatpak:ro
   - --filesystem=xdg-data/applications:create
   - --filesystem=xdg-data/desktop-directories:create
   - --filesystem=xdg-config/menus:create
-  - --filesystem=xdg-data/flatpak:ro
-  - --filesystem=host:ro
+  - --filesystem=host-os:ro # /usr/share/[applications,desktop-directories,icons]
+  - --filesystem=host-etc:ro # /etc/xdg/menus
+  - --filesystem=/tmp # https://discourse.flathub.org/t/xdg-open-cannot-open-a-file-in-the-runtime-tmp-directory/11118
 
 cleanup:
   - '/include'
@@ -27,6 +29,12 @@ cleanup:
   - '/share/bash-completion'
   - '/share/pkgconfig'
   - '/share/vala'
+  - '/share/doc'
+  - '/share/locale'
+  - '/share/desktop-directories'
+  - '/etc'
+  - '/libexec'
+  - '/lib/python3.13/site-packages/psutil/tests'
   - '*.a'
   - '*.la'
   - '*.pyc'
@@ -41,12 +49,12 @@ modules:
       - '-Dselinux=disabled'
     sources:
       - type: archive
-        url: 'https://download.gnome.org/sources/glib/2.82/glib-2.82.4.tar.xz'
-        sha256: 37dd0877fe964cd15e9a2710b044a1830fb1bd93652a6d0cb6b8b2dff187c709
+        url: 'https://download.gnome.org/sources/glib/2.86/glib-2.86.2.tar.xz'
+        sha256: 8a724e970855357ea8101e27727202392a0ffd5410a98336aed54ec59113e611
       - type: shell # patch: do-not-test-exec
         commands:
-          - sed -i '1924,1955d' gio/gdesktopappinfo.c
-          - sed -i '1906,1918d' gio/gdesktopappinfo.c
+          - sed -i '1942,1973d' gio/gdesktopappinfo.c
+          - sed -i '1924,1936d' gio/gdesktopappinfo.c
     cleanup:
       - /share
       - /lib/girepository-1.0
@@ -56,7 +64,7 @@ modules:
   - name: python-distutils-extra
     buildsystem: simple
     build-commands:
-      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/app "python-distutils-extra"'
+      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --no-build-isolation --prefix=/app "python-distutils-extra"'
     sources:
       - type: file
         url: https://launchpad.net/python-distutils-extra/trunk/2.39/+download/python-distutils-extra-2.39.tar.gz
@@ -76,21 +84,17 @@ modules:
     sources:
       - type: git
         url: https://gitlab.gnome.org/GNOME/gnome-menus.git
-        tag: 3.36.0
-      - type: shell
-        commands:
-          # patch: do-not-test-exec
-          # Do not skip files that do not contain exec
-          - sed -i '260cFALSE)' libmenu/desktop-entries.c
+        tag: 3.38.1
 
   - name: python-psutil
     buildsystem: simple
     build-commands:
-      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/app "psutil"'
+      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --no-build-isolation --prefix=/app "psutil"'
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/e1/b0/7276de53321c12981717490516b7e612364f2cb372ee8901bd4a66a000d7/psutil-5.8.0.tar.gz
-        sha256: 0c9ccb99ab76025f2f0bbecf341d4656e9c1351db8cc8a03ccd62e318ab4b5c6
+        url: https://files.pythonhosted.org/packages/e1/88/bdd0a41e5857d5d703287598cbf08dad90aed56774ea52ae071bae9071b6/psutil-7.1.3.tar.gz
+        sha256: 6c86281738d77335af7aec228328e944b30930899ea760ecf33a4dba66be5e74
+
 
   - name: links
     buildsystem: autotools
@@ -140,13 +144,13 @@ modules:
       - type: script
         dest-filename: menulibre-wrapper
         commands:
-          - export TEMP=$XDG_CACHE_HOME/tmp
           - FLATPAK_RUNTIME_DATA_DIRS=/usr/share:/usr/share/runtime/share:/run/host/user-share:/run/host/share
           - FLATPAK_APP_DATA_HOME=$XDG_DATA_HOME/flatpak/exports/share
           - HOST_DATA_DIRS=/run/host/usr/share:/run/host/usr/local/share
           - HOST_CONFIG_DIRS=/run/host/usr/share:/run/host/usr/local/share:/run/host/etc/xdg
           - export XDG_DATA_DIRS=$HOST_DATA_DIRS:$FLATPAK_APP_DATA_HOME:$OTHER_XDG_DATA_DIRS:$FLATPAK_RUNTIME_DATA_DIRS
           - export XDG_CONFIG_DIRS=$HOST_CONFIG_DIRS:$OTHER_XDG_CONFIG_DIRS
+          - export GI_TYPELIB_PATH=$GI_TYPELIB_PATH:/lib/x86_64-linux-gnu/girepository-1.0
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
@@ -154,14 +158,11 @@ modules:
         commit: ad8f3f68d243088a3dc48514269b6a35dae19022
       - type: shell
         commands:
-            # Using a custom suffix to execute the default program does not affect the default handler for .desktop files.
-            # For example, add '-exe' and configure the default program to run directly gio launch app.desktop-exe
-            - sed -i '1194s/,/+os.environ.get("DESKTOP_FILE_SUFFIX",""),/' menulibre/MenulibreApplication.py
 
             # Fix start execute
             - sed -i '1521,1531d' menulibre/MenulibreApplication.py
             - sed -i '1520i\        subprocess.Popen(["xdg-open", filename])' menulibre/MenulibreApplication.py
-            - sed -i '1521i\        GObject.timeout_add(2000, self.on_execute_timeout, filename)' menulibre/MenulibreApplication.py
+            - sed -i '1521i\        GObject.timeout_add(8000, self.on_execute_timeout, filename)' menulibre/MenulibreApplication.py
 
             # Fix icon name
             - sed -i '317c\        return model[treeiter][1]' menulibre/IconEntry.py
