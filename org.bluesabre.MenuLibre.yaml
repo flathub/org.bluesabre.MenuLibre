@@ -132,7 +132,7 @@ modules:
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
-        tag: menulibre-2.3.2
-        commit: 94bef4060714fa65c7246c25b87410b52a149f94
+        branch: master
+        commit: 70edffedb8f93bb28188c6543aab19e515bc434e
 
 
