@@ -1,23 +1,18 @@
-From 4b534a6b34f8e2f7062af9d0f4726fd77d24399c Mon Sep 17 00:00:00 2001
-From: bbhtt <bbhtt.zn0i8@slmail.me>
-Date: Mon, 3 Jul 2023 22:13:22 +0530
-Subject: [PATCH] This is only required for flatpak in the sandbox
+# This is only required for flatpak
+# In the sandbox - the programs in the Exec and Try_Exec keys do not exist
+# when listing the apps - GLib will filter them out
 
-The programs in the
-Exec and Try_Exec keys do not exist. When listing the apps GLib will
-filter them out
----
- gio/gdesktopappinfo.c | 45 -------------------------------------------
- 1 file changed, 45 deletions(-)
+# https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/blob/master/elements/components/glib.bst
+# https://gitlab.gnome.org/GNOME/gnome-build-meta/-/blob/master/elements/sdk/glib.bst
 
 diff --git a/gio/gdesktopappinfo.c b/gio/gdesktopappinfo.c
-index 1f161328a..4184d40f0 100644
+index 63ef0c045..fa5ade90a 100644
 --- a/gio/gdesktopappinfo.c
 +++ b/gio/gdesktopappinfo.c
-@@ -1910,56 +1910,11 @@ g_desktop_app_info_load_from_keyfile (GDesktopAppInfo *info,
-                                     G_KEY_FILE_DESKTOP_GROUP,
-                                     G_KEY_FILE_DESKTOP_KEY_TRY_EXEC,
-                                     NULL);
+@@ -1944,20 +1944,6 @@
+     }
+   g_clear_error (&local_error);
+
 -  if (try_exec && try_exec[0] != '\0')
 -    {
 -      char *t;
@@ -31,11 +26,14 @@ index 1f161328a..4184d40f0 100644
 -        }
 -      g_free (t);
 -    }
-
+-
    exec = g_key_file_get_string (key_file,
                                  G_KEY_FILE_DESKTOP_GROUP,
                                  G_KEY_FILE_DESKTOP_KEY_EXEC,
-                                 NULL);
+@@ -1971,39 +1957,6 @@
+     }
+   g_clear_error (&local_error);
+
 -  if (exec && exec[0] != '\0')
 -    {
 -      gint argc;
@@ -68,9 +66,7 @@ index 1f161328a..4184d40f0 100644
 -          g_free (t);
 -        }
 -    }
-
+-
    info->name = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, NULL, NULL);
    info->generic_name = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, GENERIC_NAME_KEY, NULL, NULL);
---
-2.41.0
-
+   info->fullname = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, FULL_NAME_KEY, NULL, NULL);
