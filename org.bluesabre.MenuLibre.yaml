@@ -1,6 +1,6 @@
 app-id: org.bluesabre.MenuLibre
 runtime: org.gnome.Platform
-runtime-version: '45'
+runtime-version: '50'
 sdk: org.gnome.Sdk
 command: menulibre-wrapper
 rename-icon: menulibre
@@ -41,15 +41,15 @@ modules:
       - '-Dselinux=disabled'
     sources:
       - type: archive
-        url: 'https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz'
-        sha256: 44eaab8b720877ce303c5540b657b126f12dc94972d9880b52959f43fb537b30
+        url: 'https://download.gnome.org/sources/glib/2.88/glib-2.88.2.tar.xz'
+        sha256: cf3f215a640c8a4257f14317586b8f1fdd25a10a93cb4bdda147c0f9ad88e74f
       - type: patch
         path: 0001-do-not-test-exec.patch
 
   - name: python-distutils-extra
     buildsystem: simple
     build-commands:
-      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/app "python-distutils-extra"'
+      - 'pip3 install --exists-action=i --no-index --no-build-isolation --find-links="file://${PWD}" --prefix=/app "python-distutils-extra"'
     sources:
       - type: file
         url: https://launchpad.net/python-distutils-extra/trunk/2.39/+download/python-distutils-extra-2.39.tar.gz
@@ -68,11 +68,14 @@ modules:
       - type: git
         url: https://gitlab.gnome.org/GNOME/gnome-menus.git
         tag: 3.36.0
+        commit: 66ac7579856968d3f4b76c04d55327c60b37f2fb
+      - type: patch
+        path: 0001-gir-include-giounix.patch
 
   - name: python-psutil
     buildsystem: simple
     build-commands:
-      - 'pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/app "psutil"'
+      - 'pip3 install --exists-action=i --no-index --no-build-isolation --find-links="file://${PWD}" --prefix=/app "psutil"'
     sources:
       - type: file
         url: https://files.pythonhosted.org/packages/e1/b0/7276de53321c12981717490516b7e612364f2cb372ee8901bd4a66a000d7/psutil-5.8.0.tar.gz
@@ -80,6 +83,8 @@ modules:
 
   - name: links
     buildsystem: autotools
+    build-options:
+      cflags: -std=gnu89
     post-install:
       - ln -s links "${FLATPAK_DEST}/bin/elinks"
     cleanup: ['*']
@@ -90,6 +95,8 @@ modules:
 
   - name: xmlto
     buildsystem: autotools
+    build-options:
+      cflags: -std=gnu89
     cleanup: ['*']
     sources:
       - type: archive
@@ -120,10 +127,13 @@ modules:
           - >-
             export
             XDG_DATA_DIRS=$XDG_DATA_DIRS:/run/host/usr/share:/var/lib/flatpak/exports/share:~/.local/share/flatpak/exports/share
+          - >-
+            export
+            GI_TYPELIB_PATH=$GI_TYPELIB_PATH:/usr/lib/$(uname -m)-linux-gnu/girepository-1.0
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
-        tag: menulibre-2.3.2
-        commit: 94bef4060714fa65c7246c25b87410b52a149f94
+        tag: flathub-15-0
+        commit: 70edffedb8f93bb28188c6543aab19e515bc434e
 
 
