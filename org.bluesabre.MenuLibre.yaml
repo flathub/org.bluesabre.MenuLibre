@@ -68,6 +68,7 @@ modules:
       - type: git
         url: https://gitlab.gnome.org/GNOME/gnome-menus.git
         tag: 3.36.0
+        commit: 66ac7579856968d3f4b76c04d55327c60b37f2fb
       - type: patch
         path: 0001-gir-include-giounix.patch
 
@@ -132,7 +133,6 @@ modules:
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
-        branch: master
         commit: 70edffedb8f93bb28188c6543aab19e515bc434e
 
 
