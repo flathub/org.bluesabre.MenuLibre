@@ -133,6 +133,7 @@ modules:
           - menulibre "$@"
       - type: git
         url: https://github.com/bluesabre/menulibre.git
+        tag: flathub-15-0
         commit: 70edffedb8f93bb28188c6543aab19e515bc434e
 
 
